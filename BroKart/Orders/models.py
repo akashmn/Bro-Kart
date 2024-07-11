@@ -1,6 +1,6 @@
 from django.db import models
 from Customers.models import Customers
-from Products.models import Product
+from Products.models import Products
 
 # Cart model for storing cart items
 
@@ -22,13 +22,13 @@ class Order(models.Model):
     order_status = models.IntegerField(choices=order_choices, default=CART_STAGE)
 
     delete_choices = ((LIVE, 'Live'), (DELETE, 'Delete'))
-    owner = models.ForeignKey(Customers, on_delete=models.CASCADE, related_name='orders') # owner of the cart is a customer
+    owner = models.ForeignKey(Customers, on_delete=models.SET_NULL, null=True, related_name='orders')
     delete_status = models.IntegerField(choices=delete_choices, default=LIVE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
 
-class OrderedItem(models.model):
-    product = models.ForeignKey(Product, on_delete=models.SET_NULL, related_name='added_carts')
+class OrderedItem(models.Model):
+    product = models.ForeignKey(Products, on_delete=models.SET_NULL, null=True, related_name='added_carts')
     quantity = models.IntegerField(default=1)
     owner = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='added_items')
